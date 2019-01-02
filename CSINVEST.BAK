@@ -1,0 +1,183 @@
+#include<fstream.h>
+#include<conio.h>
+#include<string.h>
+#include<stdio.h>
+class book
+{public:
+char b[30], a[20];
+int sno;
+float cost;
+void enter()
+{cout<<"\n                      Enter the details of the book";
+cout<<"\n name of the book:";
+gets(b);
+cout<<"\n name of author:";
+gets(a);
+cout<<"\n price of the book:";
+cin>>cost;
+cout<<"\n serial no. of the book:";
+cin>>sno;
+}
+void show()
+{cout<<"\n name of the book:"<<b;
+cout<<"\n name of the author:"<<a;
+cout<<"\n price of the book:"<<cost;
+cout<<"\n sserial no. of the book:"<<sno;
+}
+};
+class lib : public book
+{public:
+char name[20],sec,v;
+int clas, rno,adm;
+void read()
+{cout<<"\n                      Enter the details of the student" ;
+cout<<"\n enter the name:";
+gets(name);
+cout<<"enter the class:";
+cin>>clas;
+cout<<"\n enter the roll no:";
+cin>>rno;
+cout<<"\n enter the section:";
+cin>>sec;
+cout<<"\n enter the admission no:";
+cin>>adm;
+cout<<"\n has the student issued any book(y/n):";
+cin>>v;
+if(v=='y'||v=='Y')
+enter();
+}
+void display()
+{cout<<"\n                           details of the student";
+cout<<"\n name of student:"<<name;
+cout<<"\n class of student:"<<clas;
+cout<<"\n roll no of student:"<<rno;
+cout<<"\n admission no of the student:"<<adm;
+if(v=='y'||v=='Y')
+{cout<<"\n                           details of the book the student has issued";
+show();
+}
+}
+void modify()
+{int ns;
+float p;
+char nb[20],na[30];
+cout<<"\n name of the student is"<<name<<"of class & section"<<clas<<sec<<"and roll no."<<rno<<"admission no "<<adm;
+cout<<"\n enter the new book name:";
+gets(nb);
+cout<<"\n enter this book's author name:";
+gets(na);
+cout<<"\n enter this book's price:";
+cin>>p;
+cout<<"\n enter this book's serial no:";
+cin>>ns;
+if(nb!='\0'&&na!='\0')
+{strcpy(a,na);
+strcpy(b,nb);
+}
+if(p<0&&ns<0)
+{cost=p;
+sno=ns;
+}
+}
+};
+void main()
+{char i;
+int j,ad;
+lib s;
+clrscr();
+do
+{cout<<"\n 1 TO ADD A NEW RECORD";
+cout<<"\n 2 TO SHOW THE WHOLE FILE";
+cout<<"\n 3 TO MODIFY A RECORD FOR ISSUED BOOKS OF A PARTICULAR STUDENT";
+cout<<"\n 4 TO SEARCH A RECORD";
+cout<<"\n 5 TO DELETE A RECORD";
+cout<<"\n 6 TO SHOW WHO MADE THIS PROJECT";
+cout<<"\n enter your choice:";
+cin>>j;
+switch(j)
+{case 1:
+char z;
+fstream f1("csinv.txt",ios::binary|ios::out|ios::app|ios::in);
+do
+{s.read();
+f1.write((char*)&s,sizeof(s));
+cout<<"\n do you want to add more(y/n)";
+cin>>z;
+}while(z=='y'||z=='Y');
+f1.close();
+break;
+case 2: fstream f3("csinv.txt",ios::binary|ios::out|ios::app|ios::in);
+while(f3.read((char*)&s,sizeof(s)))
+{s.display();
+}
+f3.close();
+break;
+case 3: fstream f4("csinv.txt",ios::binary|ios::out|ios::app|ios::in);
+int f9=0,pos;
+cout<<"\n enter the admission no of the student who has issued a new book:";
+cin>>ad;
+while(f4.read((char*)&s,sizeof(s)))
+{if(s.adm==ad)
+{f9=1;
+s.modify();
+pos=f4.tellg()-sizeof(s);
+f4.seekp(pos);
+f4.write((char*)&s,sizeof(s));
+break;
+}
+}
+if(f9==0)
+cout<<"\n record not found";
+f4.close();
+break;
+case 4:ifstream f5("csinv.txt",ios::binary);
+int h=0;
+cout<<"\n enter the admission no. of the student to be searched";
+cin>>ad;
+while(f5.read((char*)&s,sizeof(s)))
+{if(s.adm==ad)
+{h=1;
+break;
+}
+if(h==1)
+s.display();
+else
+cout<<"\n record not found";
+}
+f5.close();
+break;
+case 5:fstream f6("csinv.txt",ios::binary|ios::out|ios::app|ios::in);
+fstream f2("temp.txt",ios::binary|ios::out|ios::app|ios::in);
+int g;
+char l;
+cout<<"\n anter the admission no the student whose data is to be deleted:";
+cin>>ad;
+while(f6.read((char*)&s,sizeof(s)))
+{if(s.adm==ad)
+{g=1;
+s.display();
+cout<<"\n do you really want to delete this record(y/n):";
+cin>>l;
+if(l=='y'||l=='Y')
+f2.write((char*)&s,sizeof(s));
+}
+else
+f2.write((char*)&s,sizeof(s));
+}
+if(g==0)
+cout<<"\n record not found";
+remove("csinv.txt");
+rename("temp.txt","csinv.txt");
+f2.close();
+f6.close();
+break;
+case 6:cout<<"\n SHREEDEV GANESH MISHRA (ROLL NO:36) \n ARPIT MISHRA (ROLL NO:11) \n CLASS 12A \n KENDRIYA VIDYALAYA J.N.U";
+break;
+default :cout<<"\n WRONG ENTRY";
+break;
+}
+cout<<"\n do you want to continue(y/n):";
+cin>>i;
+}while(i=='y'||i=='Y');
+getch();
+}
